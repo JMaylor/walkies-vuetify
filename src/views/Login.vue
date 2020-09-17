@@ -3,7 +3,7 @@
 		<v-row align="center" justify="center">
 			<v-col cols="12" sm="8" md="4">
 				<h2 class="display-1">Login</h2>
-				<v-form ref="form" v-model="valid" lazy-validation @submit.prevent="register()">
+				<v-form ref="form" v-model="valid" @submit.prevent="submit">
 					<v-row>
 						<!-- Email -->
 						<v-col cols="12">

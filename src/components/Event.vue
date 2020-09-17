@@ -15,7 +15,7 @@
 			</v-row>
 		</v-expansion-panel-header>
 
-		<v-expansion-panel-content eager class="py-0 my-0">
+		<v-expansion-panel-content class="py-0 my-0">
 			<v-divider></v-divider>
 			<v-card height="300" class="pa-1 mt-3" rounded elevation="8">
 				<v-card :id="`event-map-${event._id.$oid}`" height="292" rounded elevation="4"></v-card>
@@ -64,10 +64,10 @@
 				return (
 					Math.round(
 						this.getDistanceFromLatLonInMiles(
-							this.$store.state.userProfile.location.coordinates[0],
 							this.$store.state.userProfile.location.coordinates[1],
-							this.event.location.coordinates[0],
-							this.event.location.coordinates[1]
+							this.$store.state.userProfile.location.coordinates[0],
+							this.event.location.coordinates[1],
+							this.event.location.coordinates[0]
 						) * 10
 					) / 10
 				);

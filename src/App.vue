@@ -23,6 +23,17 @@
 
 		data: () => ({
 			//
-		})
+		}),
+		mounted() {
+			// check if there is a token in local storage
+			if (this.$store.state.token) {
+				this.$store.dispatch('getUserProfile')
+			}
+			// if there is save it to state
+			// try to retreive profile
+			// if that succeeds OK
+			// if not, clear the token from local storage and remove it from the state
+
+		}
 	};
 </script>

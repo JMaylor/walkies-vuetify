@@ -4,7 +4,7 @@
 			><v-list nav dense>
 				<div v-for="(link, i) in links" :key="i">
 					<v-list-item
-						v-if="!link.subLinks"
+						v-if="!link.subLinks && link.show"
 						:to="link.to"
 						class="v-list-item"
 					>
@@ -16,7 +16,7 @@
 					</v-list-item>
 
 					<v-list-group
-						v-else
+						v-else-if="link.show"
 						:key="link.text"
 						no-action
 						:prepend-icon="link.icon"
@@ -46,7 +46,7 @@
 					</v-list-group>
 				</div>
 			</v-list>
-			<v-list dense>
+			<v-list dense v-if="$store.state.token">
 				<v-list-item class="v-list-item" @click="$store.dispatch('logout')">
 					<v-list-item-icon>
 						<v-icon color="accent">mdi-logout</v-icon>
@@ -66,11 +66,13 @@
 					{
 						to: "/",
 						icon: "mdi-home",
-						text: "Home"
+						text: "Home",
+						show: true
 					},
 					{
 						icon: "mdi-account",
 						text: "Profile",
+						show: this.$store.state.token,
 						subLinks: [
 							{
 								to: "/profile/dogs",
@@ -80,7 +82,7 @@
 							{
 								to: "/profile/events",
 								icon: "mdi-calendar",
-								text: "Events"
+								text: "Your Events"
 							},
 							{
 								to: "/account",
@@ -92,16 +94,19 @@
 					{
 						to: "/register",
 						icon: "mdi-account-plus",
-						text: "Register"
+						text: "Register",
+						show: !this.$store.state.token,
 					},
 					{
 						to: "/login",
 						icon: "mdi-login",
-						text: "Login"
+						text: "Login",
+						show: !this.$store.state.token,
 					},
 					{
 						icon: "mdi-magnify",
 						text: "Search",
+						show: this.$store.state.token,
 						subLinks: [
 							{
 								to: "/search/map",

@@ -8,9 +8,18 @@
 
 		<v-row v-if="$store.state.userProfile">
 			<v-expansion-panels popout>
-				<v-dialog v-model="dialog" persistent max-width="600px">
+				<v-dialog v-model="dialog" max-width="600px">
 					<template v-slot:activator="{ on, attrs }">
-						<v-btn color="info" v-bind="attrs" v-on="on" dark absolute top left fab>
+						<v-btn
+							color="info"
+							v-bind="attrs"
+							v-on="on"
+							dark
+							absolute
+							top
+							left
+							fab
+						>
 							<v-icon>mdi-plus</v-icon>
 						</v-btn>
 					</template>
@@ -20,7 +29,7 @@
 						</v-card-title>
 						<v-card-text>
 							<v-container>
-								<v-form>
+								<v-form v-model="valid">
 									<v-text-field
 										label="Name"
 										prepend-icon="mdi-dog"
@@ -45,7 +54,9 @@
 										offset-y
 										min-width="290px"
 									>
-										<template v-slot:activator="{ on, attrs }">
+										<template
+											v-slot:activator="{ on, attrs }"
+										>
 											<v-text-field
 												v-model="dog.date_of_birth"
 												chips
@@ -71,8 +82,22 @@
 											color="secondary"
 										>
 											<v-spacer></v-spacer>
-											<v-btn text color="primary" @click="menu = false">Cancel</v-btn>
-											<v-btn text color="primary" @click="$refs.menu.save(dog.date_of_birth)">OK</v-btn>
+											<v-btn
+												text
+												color="primary"
+												@click="menu = false"
+												>Cancel</v-btn
+											>
+											<v-btn
+												text
+												color="primary"
+												@click="
+													$refs.menu.save(
+														dog.date_of_birth
+													)
+												"
+												>OK</v-btn
+											>
 										</v-date-picker>
 									</v-menu>
 								</v-form>
@@ -80,13 +105,38 @@
 						</v-card-text>
 						<v-card-actions>
 							<v-spacer></v-spacer>
-							<v-btn color="warning" @click="dialog = false">Close</v-btn>
-							<v-btn color="success" @click="addDog">Save</v-btn>
+							<v-btn
+								color="warning"
+								@click="
+									dialog = false;
+									editing = false;
+								"
+								>Close</v-btn
+							>
+							<v-btn
+								v-if="editing"
+								:disabled="!valid"
+								color="success"
+								@click="editDog"
+								>Save</v-btn
+							>
+							<v-btn
+								v-else
+								:disabled="!valid"
+								color="success"
+								@click="addDog"
+								>Save</v-btn
+							>
 						</v-card-actions>
 					</v-card>
 				</v-dialog>
 
-				<Dog v-for="dog in $store.state.userProfile.dogs" :key="dog._id.$oid" :dog="dog" />
+				<Dog
+					v-for="dog in $store.state.userProfile.dogs"
+					:key="dog._id.$oid"
+					:dog="dog"
+					v-on:edit="startEdit(dog)"
+				/>
 			</v-expansion-panels>
 		</v-row>
 	</v-container>
@@ -94,7 +144,7 @@
 
 <script>
 	import Dog from "@/components/Dog";
-	const axios = require("axios");
+	import moment from "moment";
 
 	export default {
 		components: {
@@ -103,10 +153,12 @@
 		data: () => ({
 			dialog: false,
 			dog: {
+				id: "",
 				name: "",
 				breed: "",
 				date_of_birth: ""
 			},
+			editing: false,
 			breedOptions: [
 				"Border Collie",
 				"Cocker Spaniel",
@@ -117,26 +169,43 @@
 			],
 			existsRules: [v => !!v || "Required"],
 			menu: false,
-			maxDate: new Date().toISOString().substr(0, 10)
+			maxDate: new Date().toISOString().substr(0, 10),
+			valid: false
 		}),
 		methods: {
 			addDog() {
-				this.dialog = false
-				axios
-					.post(
-						`${this.$store.state.baseURL}dogs`,
-						{
-							name: this.dog.name,
-							breed: this.dog.breed,
-							date_of_birth: `${this.dog.date_of_birth}-01`
-						},
-						{
-							headers: {
-								Authorization: `Bearer ${this.$store.state.token}`
-							}
-						}
+				this.dialog = false;
+				this.$store.dispatch("addDog", this.dog);
+				this.dog = {
+					name: "",
+					breed: "",
+					date_of_birth: ""
+				};
+			},
+			startEdit(dog) {
+				console.log("editting dog");
+				console.log(dog);
+				this.editing = true;
+				this.dialog = true;
+				this.dog = {
+					id: dog._id.$oid,
+					name: dog.name,
+					breed: dog.breed,
+					date_of_birth: moment(dog.date_of_birth.$date).format(
+						"YYYY-MM-DD"
 					)
-					.then(response => console.log(response));
+				};
+			},
+			editDog() {
+				console.log("editting your existing doggo");
+				this.dialog = false;
+				this.editing = false;
+				this.$store.dispatch("editDog", this.dog);
+				this.dog = {
+					name: "",
+					breed: "",
+					date_of_birth: ""
+				};
 			}
 		},
 		beforeMount() {

@@ -8,7 +8,14 @@
 							? "mdi-gender-male"
 							: "mdi-gender-female"
 					}}</v-icon>
-					<strong v-html="user.first_name"></strong>
+					<v-badge
+						v-if="hasEventPending"
+						color="accent"
+						icon="mdi-calendar-alert"
+					>
+						<strong v-html="user.first_name" />
+					</v-badge>
+					<strong v-else v-html="user.first_name" />
 				</v-col>
 				<v-col>{{ displayAge(user) }} old</v-col>
 
@@ -69,7 +76,6 @@
 										</v-datetime-picker>
 									</v-col>
 									<v-col cols="12">
-										<label>Where?</label>
 										<v-card
 											height="300"
 											class="pa-1"
@@ -84,6 +90,19 @@
 												rounded
 												elevation="4"
 											></v-card>
+											<v-btn
+												color="info"
+												dark
+												absolute
+												top
+												left
+												fab
+												@click="requestLocation"
+											>
+												<v-icon
+													>mdi-crosshairs-gps</v-icon
+												>
+											</v-btn>
 										</v-card>
 									</v-col>
 								</v-row>
@@ -91,13 +110,12 @@
 						</v-card-text>
 						<v-card-actions>
 							<v-spacer></v-spacer>
-							<v-btn
-								color="grey"
-								
-								@click="dialog = false"
+							<v-btn color="warning" @click="dialog = false"
 								>Cancel</v-btn
 							>
-							<v-btn color="secondary" @click="sendInvite">Send Invite</v-btn>
+							<v-btn color="secondary" @click="sendInvite"
+								>Send Invite</v-btn
+							>
 						</v-card-actions>
 					</v-card>
 				</v-dialog>
@@ -109,6 +127,8 @@
 <script>
 	const mapboxgl = require("mapbox-gl/dist/mapbox-gl.js");
 	const moment = require("moment");
+	const axios = require("axios");
+
 	export default {
 		props: ["user"],
 		data() {
@@ -149,13 +169,20 @@
 				return (
 					Math.round(
 						this.getDistanceFromLatLonInMiles(
-							this.$store.state.userProfile.location.coordinates[0],
 							this.$store.state.userProfile.location.coordinates[1],
-							this.user.location.coordinates[0],
-							this.user.location.coordinates[1]
+							this.$store.state.userProfile.location.coordinates[0],
+							this.user.location.coordinates[1],
+							this.user.location.coordinates[0]
 						) * 10
 					) / 10
 				);
+			},
+			hasEventPending() {
+				return this.$store.state.userProfile.events.filter(
+					x =>
+						x.invited._id.$oid == this.user._id.$oid ||
+						x.proposer._id.$oid == this.user._id.$oid
+				).length > 0
 			}
 		},
 		methods: {
@@ -231,8 +258,55 @@
 				];
 			},
 			sendInvite() {
-				console.log('sending invite')
+				console.log("sending invite");
+				axios
+					.post(
+						`${this.$store.state.baseURL}events`,
+						{
+							invited: this.user._id.$oid,
+							location: this.location,
+							time: moment
+								.utc(this.datetime)
+								.format("YYYY-MM-DD HH:mm:ss")
+						},
+						{
+							headers: {
+								Authorization: `Bearer ${this.$store.state.token}`
+							}
+						}
+					)
+					.then(response => console.log(response))
+					.catch(error => console.log(error));
+
 				this.dialog = false;
+			},
+			requestLocation() {
+				// Request to get the user's current location
+				window.navigator.geolocation.getCurrentPosition(position => {
+					// get the latitude and longitude returned
+					const lat = position.coords.latitude;
+					const lng = position.coords.longitude;
+
+					// set the location data
+					this.setLocationCoordinates({
+						lng,
+						lat
+					});
+
+					// remove old markers from map
+					this.removeMapMarkers();
+					// add marker on map for their location
+					this.addMapMarker({
+						lng: lng,
+						lat: lat
+					});
+
+					// fly there on the map
+					this.map.flyTo({
+						center: [lng, lat],
+						zoom: 12
+					});
+				}, null);
 			}
 		}
 	};
