@@ -125,7 +125,7 @@
 						<v-col cols="12">
 							<v-card height="300" class="pa-1" rounded elevation="8">
 								<v-card id="register-map" height="292" rounded elevation="4"></v-card>
-								<v-btn v-show="!hidden" color="info" dark absolute top left fab @click="requestLocation">
+								<v-btn color="info" dark absolute top left fab @click="requestLocation">
 									<v-icon>mdi-crosshairs-gps</v-icon>
 								</v-btn>
 							</v-card>
@@ -193,7 +193,6 @@
 			existsRules: [v => !!v || "Required"],
 			menu: false,
 			maxDate: maxDate.toISOString().substr(0, 10),
-
 			showPassword: false,
 			showError: false,
 			map: ""
@@ -211,6 +210,7 @@
 			},
 			reset() {
 				this.$refs["register-form"].reset();
+				this.removeMapMarkers();
 			},
 			createMap() {
 				// retreieve access token
@@ -244,10 +244,7 @@
 					this.setLocationCoordinates(e.lngLat);
 
 					// Remove any old markers on the map that they previously set
-					const oldMarker = document.querySelector(".mapboxgl-marker");
-					if (oldMarker) {
-						oldMarker.parentElement.removeChild(oldMarker);
-					}
+					this.removeMapMarkers();
 
 					// Add the new marker
 					this.addMapMarker(e.lngLat);
@@ -260,10 +257,6 @@
 				}
 			},
 			addMapMarker(lngLat) {
-				// First remove any old markers
-				this.removeMapMarkers();
-
-				// Then add new one
 				new mapboxgl.Marker({ color: "#43AA8B" })
 					.setLngLat(lngLat)
 					.addTo(this.map);
@@ -281,6 +274,8 @@
 						lat
 					});
 
+					// remove old markers from map
+					this.removeMapMarkers();
 					// add marker on map for their location
 					this.addMapMarker({
 						lng: lng,

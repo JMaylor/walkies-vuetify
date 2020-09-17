@@ -8,9 +8,84 @@
 
 		<v-row v-if="$store.state.userProfile">
 			<v-expansion-panels popout>
-				<v-btn v-show="!hidden" color="info" dark absolute top left fab>
-					<v-icon>mdi-plus</v-icon>
-				</v-btn>
+				<v-dialog v-model="dialog" persistent max-width="600px">
+					<template v-slot:activator="{ on, attrs }">
+						<v-btn color="info" v-bind="attrs" v-on="on" dark absolute top left fab>
+							<v-icon>mdi-plus</v-icon>
+						</v-btn>
+					</template>
+					<v-card>
+						<v-card-title>
+							<span class="headline">Add a dog!</span>
+						</v-card-title>
+						<v-card-text>
+							<v-container>
+								<v-form>
+									<v-text-field
+										label="Name"
+										prepend-icon="mdi-dog"
+										:rules="existsRules"
+										v-model="dog.name"
+										required
+									></v-text-field>
+									<v-select
+										:rules="existsRules"
+										v-model="dog.breed"
+										:items="breedOptions"
+										prepend-icon="mdi-dog-side"
+										label="Breed"
+										required
+									></v-select>
+									<v-menu
+										ref="menu"
+										v-model="menu"
+										:close-on-content-click="false"
+										:return-value.sync="dog.date_of_birth"
+										transition="scale-transition"
+										offset-y
+										min-width="290px"
+									>
+										<template v-slot:activator="{ on, attrs }">
+											<v-text-field
+												v-model="dog.date_of_birth"
+												chips
+												:rules="existsRules"
+												small-chips
+												label="Month of Birth"
+												prepend-icon="mdi-calendar"
+												readonly
+												required
+												v-bind="attrs"
+												v-on="on"
+											></v-text-field>
+										</template>
+										<v-date-picker
+											type="month"
+											landscape
+											v-model="dog.date_of_birth"
+											:max="maxDate"
+											no-title
+											reactive
+											required
+											scrollable
+											color="secondary"
+										>
+											<v-spacer></v-spacer>
+											<v-btn text color="primary" @click="menu = false">Cancel</v-btn>
+											<v-btn text color="primary" @click="$refs.menu.save(dog.date_of_birth)">OK</v-btn>
+										</v-date-picker>
+									</v-menu>
+								</v-form>
+							</v-container>
+						</v-card-text>
+						<v-card-actions>
+							<v-spacer></v-spacer>
+							<v-btn color="warning" @click="dialog = false">Close</v-btn>
+							<v-btn color="success" @click="addDog">Save</v-btn>
+						</v-card-actions>
+					</v-card>
+				</v-dialog>
+
 				<Dog v-for="dog in $store.state.userProfile.dogs" :key="dog._id.$oid" :dog="dog" />
 			</v-expansion-panels>
 		</v-row>
@@ -19,11 +94,51 @@
 
 <script>
 	import Dog from "@/components/Dog";
+	const axios = require("axios");
+
 	export default {
 		components: {
 			Dog
 		},
-		data: () => ({}),
+		data: () => ({
+			dialog: false,
+			dog: {
+				name: "",
+				breed: "",
+				date_of_birth: ""
+			},
+			breedOptions: [
+				"Border Collie",
+				"Cocker Spaniel",
+				"Dachshund",
+				"German Shepherd",
+				"Labrador",
+				"Other"
+			],
+			existsRules: [v => !!v || "Required"],
+			menu: false,
+			maxDate: new Date().toISOString().substr(0, 10)
+		}),
+		methods: {
+			addDog() {
+				this.dialog = false
+				axios
+					.post(
+						`${this.$store.state.baseURL}dogs`,
+						{
+							name: this.dog.name,
+							breed: this.dog.breed,
+							date_of_birth: `${this.dog.date_of_birth}-01`
+						},
+						{
+							headers: {
+								Authorization: `Bearer ${this.$store.state.token}`
+							}
+						}
+					)
+					.then(response => console.log(response));
+			}
+		},
 		beforeMount() {
 			this.$store.dispatch("getUserProfile");
 		}

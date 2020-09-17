@@ -17,8 +17,6 @@
 			<v-divider></v-divider>
 			<v-row class="d-flex justify-space-around">
 				<v-btn color="info" class="mt-3">Edit</v-btn>
-
-				<v-btn color="error" @click="removeDog">Remove</v-btn>
 				<v-dialog v-model="dialog" persistent max-width="290">
 					<template v-slot:activator="{ on, attrs }">
 						<v-btn color="error" class="mt-3" v-bind="attrs" v-on="on">Remove</v-btn>

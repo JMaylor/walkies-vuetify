@@ -42,7 +42,8 @@ export default new Vuex.Store({
             const userProfile = JSON.parse(response.data.user);
             userProfile.events.forEach((event, i) => {
               userProfile.events[i] = JSON.parse(event);
-            });
+			});
+			userProfile.events.sort((x, y) => x.time.$date - y.time.$date)
             userProfile.dogs.forEach((dog, i) => {
               userProfile.dogs[i] = JSON.parse(dog);
             });
