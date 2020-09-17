@@ -92,7 +92,7 @@
 
 					this.map.on(
 						"load",
-						setTimeout(() => this.map.resize(), 500)
+						setTimeout(() => this.map.resize(), 100)
 					);
 
 					this.addMapMarker({

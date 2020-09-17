@@ -39,6 +39,16 @@ const routes = [
     name: "Events",
     component: () => import("../views/Events.vue"),
   },
+  {
+    path: "/search/map",
+    name: "Map Search",
+    component: () => import("../views/SearchMap.vue"),
+  },
+  {
+    path: "/search/list",
+    name: "List Search",
+    component: () => import("../views/SearchList.vue"),
+  },
 ];
 
 const router = new VueRouter({

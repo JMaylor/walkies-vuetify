@@ -2,11 +2,7 @@
 	<v-navigation-drawer v-model="$store.state.drawer" app>
 		<v-list nav dense>
 			<div v-for="(link, i) in links" :key="i">
-				<v-list-item
-					v-if="!link.subLinks"
-					:to="link.to"
-					class="v-list-item"
-				>
+				<v-list-item v-if="!link.subLinks" :to="link.to" class="v-list-item">
 					<v-list-item-icon>
 						<v-icon>{{ link.icon }}</v-icon>
 					</v-list-item-icon>
@@ -47,18 +43,18 @@
 						subLinks: [
 							{
 								to: "/profile/dogs",
-								icon: 'mdi-dog-side',
-								text: "Your Dogs",
+								icon: "mdi-dog-side",
+								text: "Your Dogs"
 							},
 							{
 								to: "/profile/events",
-								icon: 'mdi-calendar',
-								text: "Events",
+								icon: "mdi-calendar",
+								text: "Events"
 							},
 							{
 								to: "/account",
-								icon: 'mdi-account-details',
-								text: "Account Details",
+								icon: "mdi-account-details",
+								text: "Account Details"
 							}
 						]
 					},
@@ -72,6 +68,22 @@
 						icon: "mdi-login",
 						text: "Login"
 					},
+					{
+						icon: "mdi-magnify",
+						text: "Search",
+						subLinks: [
+							{
+								to: "/search/map",
+								icon: "mdi-map-marker-multiple",
+								text: "Map"
+							},
+							{
+								to: "/search/list",
+								icon: "mdi-table-search",
+								text: "List"
+							}
+						]
+					}
 				]
 			};
 		}
