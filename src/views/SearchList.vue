@@ -13,7 +13,7 @@
 					v-model="distance"
 					min="1"
 					thumb-size="24"
-					max="10"
+					max="20"
 					thumb-label="always"
 				></v-slider>
 			</v-col>
@@ -73,7 +73,7 @@
 		data: () => ({
 			genders: ["Male", "Female"],
 			ages: [18, 99],
-			distance: 10,
+			distance: 20,
 			map: "",
 			users: []
 		}),
@@ -107,7 +107,7 @@
 				const searchResults = await axios.post(
 					`${this.$store.state.baseURL}user/search`,
 					{
-						distance: 10
+						distance: 20
 					},
 					{
 						headers: {

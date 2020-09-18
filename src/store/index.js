@@ -1,6 +1,7 @@
 import Vue from "vue";
 import Vuex from "vuex";
 const axios = require("axios");
+const moment = require("moment");
 
 Vue.use(Vuex);
 
@@ -47,11 +48,27 @@ export default new Vuex.Store({
             },
           })
           .then((response) => {
+            // parse the user profile
             const userProfile = JSON.parse(response.data.user);
+
+            // parse each individual event
             userProfile.events.forEach((event, i) => {
               userProfile.events[i] = JSON.parse(event);
             });
+
+            // filter to only store events in the future
+            const now = new moment();
+            // console.log(now);
+            // console.log(moment(userProfile.events[4].time.$date));
+            // console.log(moment(userProfile.events[4].time.$date).isAfter(now));
+            userProfile.events = userProfile.events.filter((x) =>
+              moment(x.time.$date).isAfter(now)
+            );
+
+            // sort to store events chronologically
             userProfile.events.sort((x, y) => x.time.$date - y.time.$date);
+
+            // parse each individual dog
             userProfile.dogs.forEach((dog, i) => {
               userProfile.dogs[i] = JSON.parse(dog);
             });

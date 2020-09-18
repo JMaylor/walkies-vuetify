@@ -178,7 +178,7 @@
 				return new moment($date).format("dddd, Do MMM");
 			},
 			formatTime($date) {
-				return new moment($date).format("HH: mm");
+				return new moment($date).format("HH:mm");
 			},
 			deg2rad(deg) {
 				return deg * (Math.PI / 180);

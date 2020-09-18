@@ -208,8 +208,5 @@
 				};
 			}
 		},
-		beforeMount() {
-			this.$store.dispatch("getUserProfile");
-		}
 	};
 </script>

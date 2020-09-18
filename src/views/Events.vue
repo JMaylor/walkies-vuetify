@@ -78,8 +78,5 @@
 			}
 		},
 		methods: {},
-		beforeMount() {
-			this.$store.dispatch("getUserProfile");
-		}
 	};
 </script>
