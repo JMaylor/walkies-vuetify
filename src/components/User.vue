@@ -60,52 +60,59 @@
 						<v-card-title class="headline">Arrange</v-card-title>
 						<v-card-text>
 							<v-container>
-								<v-row>
-									<v-col cols="12">
-										<v-datetime-picker
-											label="When?"
-											v-model="datetime"
-											:datePickerProps="datePickerProps"
-										>
-											<template slot="dateIcon">
-												<v-icon>mdi-calendar</v-icon>
-											</template>
-											<template slot="timeIcon">
-												<v-icon>mdi-clock</v-icon>
-											</template>
-										</v-datetime-picker>
-									</v-col>
-									<v-col cols="12">
-										<v-card
-											height="300"
-											class="pa-1"
-											rounded
-											elevation="8"
-										>
-											<v-card
-												:id="
-													`event-map-${user._id.$oid}`
+								<v-form :value="formValid">
+									<v-row>
+										<v-col cols="12">
+											<v-datetime-picker
+												label="When?"
+												required
+												v-model="datetime"
+												:datePickerProps="
+													datePickerProps
 												"
-												height="292"
-												rounded
-												elevation="4"
-											></v-card>
-											<v-btn
-												color="info"
-												dark
-												absolute
-												top
-												left
-												fab
-												@click="requestLocation"
 											>
-												<v-icon
-													>mdi-crosshairs-gps</v-icon
+												<template slot="dateIcon">
+													<v-icon
+														>mdi-calendar</v-icon
+													>
+												</template>
+												<template slot="timeIcon">
+													<v-icon>mdi-clock</v-icon>
+												</template>
+											</v-datetime-picker>
+										</v-col>
+										<v-col cols="12">
+											<v-card
+												height="300"
+												class="pa-1"
+												rounded
+												elevation="8"
+											>
+												<v-card
+													:id="
+														`event-map-${user._id.$oid}`
+													"
+													height="292"
+													rounded
+													elevation="4"
+												></v-card>
+												<v-btn
+													color="info"
+													dark
+													absolute
+													top
+													left
+													fab
+													@click="requestLocation"
 												>
-											</v-btn>
-										</v-card>
-									</v-col>
-								</v-row>
+													<v-icon
+														>mdi-crosshairs-gps</v-icon
+													>
+												</v-btn>
+											</v-card>
+										</v-col>
+									</v-row>
+								</v-form>
 							</v-container>
 						</v-card-text>
 						<v-card-actions>
@@ -113,7 +120,10 @@
 							<v-btn color="warning" @click="dialog = false"
 								>Cancel</v-btn
 							>
-							<v-btn color="secondary" @click="sendInvite"
+							<v-btn
+								color="secondary"
+								:disabled="!formValid"
+								@click="sendInvite"
 								>Send Invite</v-btn
 							>
 						</v-card-actions>
@@ -143,7 +153,9 @@
 					min: new moment()
 						.add(1, "d")
 						.toISOString()
-						.substr(0, 10)
+						.substr(0, 10),
+					required: true,
+					rules: [v => !!v || "Required"]
 				},
 				timePickerProps: {},
 				datetime: null,
@@ -151,7 +163,7 @@
 					type: "Point",
 					coordinates: []
 				},
-				map: ""
+				map: "",
 			};
 		},
 		watch: {
@@ -165,6 +177,9 @@
 			}
 		},
 		computed: {
+			formValid() {
+				return this.datetime && this.location.coordinates.length == 2
+			},
 			travelDistance() {
 				return (
 					Math.round(
@@ -178,11 +193,13 @@
 				);
 			},
 			hasEventPending() {
-				return this.$store.state.userProfile.events.filter(
-					x =>
-						x.invited._id.$oid == this.user._id.$oid ||
-						x.proposer._id.$oid == this.user._id.$oid
-				).length > 0
+				return (
+					this.$store.state.userProfile.events.filter(
+						x =>
+							x.invited._id.$oid == this.user._id.$oid ||
+							x.proposer._id.$oid == this.user._id.$oid
+					).length > 0
+				);
 			}
 		},
 		methods: {
