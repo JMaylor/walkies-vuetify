@@ -31,6 +31,34 @@ export default new Vuex.Store({
         (x) => x._id.$oid !== dog._id.$oid
       );
     },
+    acceptEvent(state, id) {
+      // find the event index
+      const eventIndex = state.userProfile.events.findIndex(
+        (x) => x._id.$oid == id
+      );
+      // change status to accepted
+      if (eventIndex > -1) {
+        state.userProfile.events[eventIndex].status = "accepted";
+      }
+    },
+    declineEvent(state, id) {
+      // find the event index
+      const eventIndex = state.userProfile.events.findIndex(
+        (x) => x._id.$oid == id
+      );
+      // remove it
+      if (eventIndex > -1) {
+        state.userProfile.events.splice(eventIndex, 1);
+      }
+    },
+    updateEvent(state, updatedEvent) {
+      // find the event index
+      const eventIndex = state.userProfile.events.findIndex(
+        (x) => x._id.$oid == updatedEvent._id.$oid
+      );
+	  // update it
+	  state.userProfile.events.splice(eventIndex, 1, updatedEvent)
+    },
   },
   actions: {
     storeToken(context, token) {
@@ -116,6 +144,51 @@ export default new Vuex.Store({
         }
       );
       context.dispatch("getUserProfile");
+    },
+    acceptEvent(context, id) {
+      axios
+        .put(
+          `${context.state.baseURL}events/accept/${id}`,
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${context.state.token}`,
+            },
+          }
+        )
+        .then((response) => {
+          context.commit("acceptEvent", id);
+          return response;
+        })
+        .catch((err) => console.log(err));
+    },
+    declineEvent(context, id) {
+      axios
+        .delete(`${context.state.baseURL}events/decline/${id}`, {
+          headers: {
+            Authorization: `Bearer ${context.state.token}`,
+          },
+        })
+        .then((response) => {
+          context.commit("declineEvent", id);
+          return response;
+        })
+        .catch((err) => console.log(err));
+    },
+    updateEvent(context, event) {
+      console.log(event);
+      axios
+        .put(`${context.state.baseURL}events/${event.id}`, event.details, {
+          headers: {
+            Authorization: `Bearer ${context.state.token}`,
+          },
+        })
+        .then((response) => {
+          // parse the returned event
+          const updatedEvent = JSON.parse(response.data.event);
+          context.commit("updateEvent", updatedEvent);
+        })
+        .catch((err) => console.log(err));
     },
   },
   modules: {},

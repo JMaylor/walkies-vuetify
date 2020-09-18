@@ -1,5 +1,5 @@
 <template>
-	<v-expansion-panel hide-actions>
+	<v-expansion-panel @change="destroyMap" v-model="content">
 		<v-expansion-panel-header @click="createMap">
 			<v-row align="center" justify="center" no-gutters>
 				<v-col>
@@ -29,16 +29,63 @@
 
 		<v-expansion-panel-content class="py-0 my-0">
 			<v-divider></v-divider>
-			<v-col cols="3"
-				>{{ status
-				}}<v-datetime-picker label="When?">
-					<template slot="dateIcon">
-						<v-icon>mdi-calendar</v-icon>
-					</template>
-					<template slot="timeIcon">
-						<v-icon>mdi-clock</v-icon>
-					</template>
-				</v-datetime-picker></v-col
+			<div v-if="status == 'Invited'">
+				<v-row
+					v-if="!editting"
+					justify="center"
+					align="center"
+					class="text-center"
+				>
+					<v-col cols="4"
+						><v-btn color="error" @click="declineEvent"
+							>Decline</v-btn
+						></v-col
+					>
+					<v-col cols="4"
+						><v-btn color="success" @click="acceptEvent"
+							>Accept</v-btn
+						></v-col
+					>
+					<v-col cols="4"
+						><v-btn color="accent" @click="initEditEvent"
+							>Counter</v-btn
+						></v-col
+					>
+				</v-row>
+				<v-row
+					v-else
+					justify="center"
+					align="center"
+					class="text-center"
+				>
+					<v-col cols="4"
+						><v-btn color="success" @click="updateEvent"
+							>Send Update</v-btn
+						></v-col
+					>
+					<v-col cols="4"
+						><v-btn color="warning" @click="cancelEditEvent"
+							>Withdraw</v-btn
+						></v-col
+					>
+				</v-row>
+			</div>
+
+			<v-row
+				v-if="editting"
+				justify="center"
+				align="center"
+				class="text-center"
+				><v-col cols="4">
+					<v-datetime-picker label="When?" v-model="time">
+						<template slot="dateIcon">
+							<v-icon>mdi-calendar</v-icon>
+						</template>
+						<template slot="timeIcon">
+							<v-icon>mdi-clock</v-icon>
+						</template>
+					</v-datetime-picker>
+				</v-col></v-row
 			>
 			<v-card height="300" class="pa-1 mt-3" rounded elevation="8">
 				<v-card
@@ -77,9 +124,16 @@
 		props: ["event"],
 		data() {
 			return {
-				test: '',
+				content: false,
+				test: "",
 				dialog: false,
-				map: ""
+				map: "",
+				editting: false,
+				location: {
+					type: "Point",
+					coordinates: []
+				},
+				time: ""
 			};
 		},
 		computed: {
@@ -114,6 +168,62 @@
 			}
 		},
 		methods: {
+			acceptEvent() {
+				console.log("accepting event");
+				this.$store
+					.dispatch("acceptEvent", this.event._id.$oid)
+					.then(response => {
+						console.log(response);
+						this.$emit("close");
+					})
+					.catch(err => console.log(err));
+			},
+			declineEvent() {
+				console.log("declining event");
+				this.$store
+					.dispatch("declineEvent", this.event._id.$oid)
+					.then(response => {
+						console.log(response);
+						this.$emit("close");
+					})
+					.catch(err => console.log(err));
+			},
+			updateEvent() {
+				console.log("sending counter offer!");
+				this.$store
+					.dispatch("updateEvent", {
+						id: this.event._id.$oid,
+						details: {
+							time: moment
+								.utc(this.time)
+								.format("YYYY-MM-DD HH:mm:ss"),
+							location: this.location,
+							proposer: this.$store.state.userProfile._id.$oid,
+							invited: this.otherUser._id.$oid
+						}
+					})
+					.then(response => {
+						console.log(response);
+						this.$emit("close");
+					})
+					.catch(err => console.log(err));
+			},
+			initEditEvent() {
+				this.editting = true;
+				// add map event listener
+				this.location.coordinates = this.event.location.coordinates;
+				this.time = moment(this.event.time.$date)._d;
+			},
+			cancelEditEvent() {
+				this.editting = false;
+				// remove map event listener
+				this.location.coordinates = [];
+				this.time = "";
+			},
+			destroyMap() {
+				console.log(this.content);
+				console.log("destroying map", this.event._id.$oid);
+			},
 			createMap() {
 				setTimeout(() => {
 					// retreieve access token
@@ -135,6 +245,7 @@
 						setTimeout(() => this.map.resize(), 100)
 					);
 
+					// event location marker
 					this.addMapMarker(
 						{
 							lng: this.event.location.coordinates[0],

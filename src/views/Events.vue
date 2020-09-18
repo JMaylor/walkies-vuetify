@@ -23,11 +23,12 @@
 			justify="center"
 			no-gutters
 		>
-			<v-expansion-panels>
+			<v-expansion-panels v-model="openedPanel">
 				<Event
 					v-for="event in filteredEvents"
 					:key="event._id.$oid"
 					:event="event"
+					v-on:close="openedPanel = null"
 				/>
 			</v-expansion-panels>
 		</v-row>
@@ -43,7 +44,8 @@
 			Event
 		},
 		data: () => ({
-			statuses: ["Confirmed", "Invited"]
+			statuses: ["Confirmed", "Invited", 'Pending'],
+			openedPanel: null
 		}),
 		computed: {
 			filteredEvents() {
@@ -77,6 +79,11 @@
 					.sort((x, y) => x.time.$date - y.time.$date);
 			}
 		},
-		methods: {},
+		methods: {
+			closePanels() {
+				console.log('closing panels');
+				this.op
+			}
+		},
 	};
 </script>
