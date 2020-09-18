@@ -27,10 +27,11 @@
 			</v-row>
 		</v-expansion-panel-header>
 
-		<v-expansion-panel-content eager class="py-0 my-0">
+		<v-expansion-panel-content class="py-0 my-0">
 			<v-divider></v-divider>
 			<v-col cols="3"
-				>{{ status }}<v-datetime-picker label="When?">
+				>{{ status
+				}}<v-datetime-picker label="When?">
 					<template slot="dateIcon">
 						<v-icon>mdi-calendar</v-icon>
 					</template>
@@ -76,6 +77,7 @@
 		props: ["event"],
 		data() {
 			return {
+				test: '',
 				dialog: false,
 				map: ""
 			};
@@ -106,14 +108,14 @@
 					this.event.invited._id.$oid ==
 					this.$store.state.userProfile._id.$oid
 				) {
-					return 'Invited'
+					return "Invited";
 				}
-				return 'Pending'
+				return "Pending";
 			}
 		},
 		methods: {
 			createMap() {
-				this.$nextTick(() => {
+				setTimeout(() => {
 					// retreieve access token
 					mapboxgl.accessToken = this.$store.state.mapboxKey;
 					// create map
@@ -161,7 +163,7 @@
 
 					// Add click listener
 					// this.addMapClickListener();
-				});
+				}, 500);
 			},
 			removeMapMarkers() {
 				const oldMarker = document.querySelector(".mapboxgl-marker");
