@@ -4,8 +4,20 @@
 			<v-row align="center" justify="center" no-gutters>
 				<v-col>
 					<v-icon
-						:color="event.status == 'accepted' ? 'success' : event.proposer._id.$oid == $store.state.userProfile._id.$oid ? 'accent' : 'warning'"
-					>{{ event.status == 'accepted' ? 'mdi-calendar-check-outline' : 'mdi-calendar-question' }}</v-icon>
+						:color="
+							event.status == 'accepted'
+								? 'success'
+								: event.proposer._id.$oid ==
+								  $store.state.userProfile._id.$oid
+								? 'accent'
+								: 'warning'
+						"
+						>{{
+							event.status == "accepted"
+								? "mdi-calendar-check-outline"
+								: "mdi-calendar-question"
+						}}</v-icon
+					>
 				</v-col>
 				<v-col>{{ formatDate(event.time.$date) }}</v-col>
 				<v-col>{{ formatTime(event.time.$date) }}</v-col>
@@ -15,10 +27,25 @@
 			</v-row>
 		</v-expansion-panel-header>
 
-		<v-expansion-panel-content class="py-0 my-0">
+		<v-expansion-panel-content eager class="py-0 my-0">
 			<v-divider></v-divider>
+			<v-col cols="3"
+				>{{ status }}<v-datetime-picker label="When?">
+					<template slot="dateIcon">
+						<v-icon>mdi-calendar</v-icon>
+					</template>
+					<template slot="timeIcon">
+						<v-icon>mdi-clock</v-icon>
+					</template>
+				</v-datetime-picker></v-col
+			>
 			<v-card height="300" class="pa-1 mt-3" rounded elevation="8">
-				<v-card :id="`event-map-${event._id.$oid}`" height="292" rounded elevation="4"></v-card>
+				<v-card
+					:id="`event-map-${event._id.$oid}`"
+					height="292"
+					rounded
+					elevation="4"
+				></v-card>
 			</v-card>
 			<!-- <v-row class="d-flex justify-space-around">
 			<v-btn color="info" class="mt-3">Edit</v-btn>
@@ -71,6 +98,17 @@
 						) * 10
 					) / 10
 				);
+			},
+			status() {
+				if (this.event.status == "accepted") {
+					return "Confirmed";
+				} else if (
+					this.event.invited._id.$oid ==
+					this.$store.state.userProfile._id.$oid
+				) {
+					return 'Invited'
+				}
+				return 'Pending'
 			}
 		},
 		methods: {
@@ -95,22 +133,31 @@
 						setTimeout(() => this.map.resize(), 100)
 					);
 
-					this.addMapMarker({
-						lng: this.event.location.coordinates[0],
-						lat: this.event.location.coordinates[1]
-					} ,"#43AA8B")
+					this.addMapMarker(
+						{
+							lng: this.event.location.coordinates[0],
+							lat: this.event.location.coordinates[1]
+						},
+						"#43AA8B"
+					);
 
-					this.addMapMarker({
-						lng: this.otherUser.location.coordinates[0],
-						lat: this.otherUser.location.coordinates[1]
-					} ,"#277DA1")
+					this.addMapMarker(
+						{
+							lng: this.otherUser.location.coordinates[0],
+							lat: this.otherUser.location.coordinates[1]
+						},
+						"#277DA1"
+					);
 
-					this.addMapMarker({
-						lng: this.$store.state.userProfile.location.coordinates[0],
-						lat: this.$store.state.userProfile.location.coordinates[1]
-					} ,"#F8961E")
-
-					
+					this.addMapMarker(
+						{
+							lng: this.$store.state.userProfile.location
+								.coordinates[0],
+							lat: this.$store.state.userProfile.location
+								.coordinates[1]
+						},
+						"#F8961E"
+					);
 
 					// Add click listener
 					// this.addMapClickListener();
@@ -123,9 +170,7 @@
 				}
 			},
 			addMapMarker(lngLat, color) {
-				new mapboxgl.Marker({ color })
-					.setLngLat(lngLat)
-					.addTo(this.map);
+				new mapboxgl.Marker({ color }).setLngLat(lngLat).addTo(this.map);
 			},
 			formatDate($date) {
 				return new moment($date).format("dddd, Do MMM");

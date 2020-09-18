@@ -153,9 +153,9 @@
 				popupInstance.$mount("#vue-popup-content");
 			},
 			removeMapMarkers() {
-				const oldMarker = document.querySelector(".mapboxgl-marker");
-				if (oldMarker) {
-					oldMarker.parentElement.removeChild(oldMarker);
+				const oldMarkers = document.querySelectorAll(".mapboxgl-marker");
+				if (oldMarkers) {
+					oldMarkers.forEach(el => el.parentElement.removeChild(el));
 				}
 			},
 			addMapMarker(lngLat, color, popup) {

@@ -50,7 +50,7 @@
 						>*Indicates an event is already pending with this
 						user</small
 					></v-badge
-				><v-expansion-panels popout>
+				><v-expansion-panels>
 					<User
 						v-for="user in filteredUsers"
 						:key="user._id.$oid"

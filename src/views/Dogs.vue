@@ -7,7 +7,7 @@
 		</v-row>
 
 		<v-row v-if="$store.state.userProfile">
-			<v-expansion-panels popout>
+			<v-expansion-panels>
 				<v-dialog v-model="dialog" max-width="600px">
 					<template v-slot:activator="{ on, attrs }">
 						<v-btn

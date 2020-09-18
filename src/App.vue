@@ -37,3 +37,10 @@
 		}
 	};
 </script>
+
+<style>
+#app {
+	background-color: #277ca10e;
+}
+
+</style>
