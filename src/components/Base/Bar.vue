@@ -1,7 +1,7 @@
 <template>
 	<v-app-bar app color="primary" dark>
 		<v-app-bar-nav-icon @click.stop="$store.commit('toggleDrawer')"></v-app-bar-nav-icon>
-		<v-toolbar-title>Walkies</v-toolbar-title>
+		<v-toolbar-title class="walkies-brand">Walkies</v-toolbar-title>
 
 		<v-spacer></v-spacer>
 

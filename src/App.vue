@@ -41,8 +41,13 @@
 </script>
 
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
 #app {
 	background-color: #277ca10e;
+}
+
+.walkies-brand {
+	font-family: Pacifico, cursive;
 }
 
 </style>

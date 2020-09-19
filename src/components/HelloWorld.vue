@@ -1,141 +1,183 @@
 <template>
-  <v-container>
-    <v-row class="text-center">
-      <v-col cols="12">
-        <v-img
-          :src="require('../assets/logo.png')"
-          class="my-3"
-          contain
-          height="200"
-        />
-      </v-col>
+	<v-container fluid class="py-0">
+		<v-row class="text-center my-0">
+			<v-col class="pa-0 notice">
+				<v-dialog v-model="dialog" width="500">
+					<template v-slot:activator="{ on, attrs }">
+						<span v-bind="attrs" v-on="on"
+							>Please see here for extra advice during the
+							COVID-19 (Coronavirus) pandemic.</span
+						>
+					</template>
+					<v-card>
+						<v-card-title class="headline grey lighten-2">
+							COVID Advice
+						</v-card-title>
 
-      <v-col class="mb-4">
-        <h1 class="display-2 font-weight-bold mb-3">
-          Welcome to Walkies
-        </h1>
+						<v-card-text>
+							<p class="mt-2">
+								Please make sure to follow
+								<a
+									href="https://www.gov.uk/coronavirus"
+									target="_blank"
+									>government advice</a
+								>
+								when using Walkies.
+							</p>
 
-        <p class="subheading font-weight-regular">
-          For help and collaboration with other Vuetify developers,
-          <br />please join our online
-          <a href="https://community.vuetifyjs.com" target="_blank"
-            >Discord Community</a
-          >
-        </p>
-      </v-col>
+							<p>
+								Lorem ipsum dolor sit amet, consectetur
+								adipiscing elit, sed do eiusmod tempor
+								incididunt ut labore et dolore magna aliqua. Ut
+								enim ad minim veniam, quis nostrud exercitation
+								ullamco laboris nisi ut aliquip ex ea commodo
+								consequat. Duis aute irure dolor in
+								reprehenderit in voluptate velit esse cillum
+								dolore eu fugiat nulla pariatur. Excepteur sint
+								occaecat cupidatat non proident, sunt in culpa
+								qui officia deserunt mollit anim id est laborum.
+							</p>
+						</v-card-text>
 
-      <v-col class="mb-5" cols="12">
-        <h2 class="headline font-weight-bold mb-3">
-          What's next?
-        </h2>
+						<v-divider></v-divider>
 
-        <v-row justify="center">
-          <a
-            v-for="(next, i) in whatsNext"
-            :key="i"
-            :href="next.href"
-            class="subheading mx-3"
-            target="_blank"
-          >
-            {{ next.text }}
-          </a>
-        </v-row>
-      </v-col>
+						<v-card-actions>
+							<v-spacer></v-spacer>
+							<v-btn color="primary" text @click="dialog = false">
+								OK
+							</v-btn>
+						</v-card-actions>
+					</v-card>
+				</v-dialog>
+			</v-col>
+		</v-row>
+		<v-row class="text-center hero" mt-0 justify="start">
+			<v-col class="ma-4" cols="12" md="4">
+				<h1 class="display-2 font-weight-bold mb-3 white--text">
+					<span class="walkies-brand">Walkies</span><br />Puppy play,
+					without the pay.
+				</h1>
+				<v-chip
+					class="ma-2"
+					color="secondary"
+					text-color="white"
+					to="/register"
+				>
+					<v-avatar left>
+						<v-icon>mdi-paw</v-icon>
+					</v-avatar>
+					Get started today! </v-chip
+				><br />
+				<span class="white--text">Already have an account?</span>
+				<v-chip
+					class="ma-2"
+					color="accent"
+					text-color="white"
+					to="/login"
+				>
+					<v-avatar left>
+						<v-icon>mdi-login</v-icon>
+					</v-avatar>
+					Login! </v-chip
+				><br />
+			</v-col>
+		</v-row>
 
-      <v-col class="mb-5" cols="12">
-        <h2 class="headline font-weight-bold mb-3">
-          Important Links
-        </h2>
+		<v-row class="text-center" ma-0 pa-0 justify="start">
+			<v-col cols="12" md="6">
+				<v-card class="py-12 px-4" color="grey lighten-5" flat>
+					<v-avatar color="primary darken-4" size="88">
+						<v-icon large color="white">mdi-paw</v-icon>
+					</v-avatar>
 
-        <v-row justify="center">
-          <a
-            v-for="(link, i) in importantLinks"
-            :key="i"
-            :href="link.href"
-            class="subheading mx-3"
-            target="_blank"
-          >
-            {{ link.text }}
-          </a>
-        </v-row>
-      </v-col>
+					<v-card-title
+						class="justify-center font-weight-black text-uppercase"
+						>Title</v-card-title
+					>
+					<v-card-text class="subtitle-1">text</v-card-text>
+				</v-card>
+			</v-col>
+			<v-col cols="12" md="6">
+				<v-card class="py-12 px-4" color="grey lighten-5" flat>
 
-      <v-col class="mb-5" cols="12">
-        <h2 class="headline font-weight-bold mb-3">
-          Ecosystem
-        </h2>
-
-        <v-row justify="center">
-          <a
-            v-for="(eco, i) in ecosystem"
-            :key="i"
-            :href="eco.href"
-            class="subheading mx-3"
-            target="_blank"
-          >
-            {{ eco.text }}
-          </a>
-        </v-row>
-      </v-col>
-    </v-row>
-  </v-container>
+					<v-card-text class="subtitle-1">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Sapiente quidem ducimus modi atque perspiciatis libero, dicta delectus! Totam praesentium esse labore nisi maiores accusamus assumenda corporis, libero cupiditate! Rerum, ducimus?</v-card-text>
+				</v-card>
+			</v-col>
+		</v-row>
+	</v-container>
 </template>
 
 <script>
-export default {
-  name: "HelloWorld",
+	export default {
+		name: "HelloWorld",
 
-  data: () => ({
-    ecosystem: [
-      {
-        text: "vuetify-loader",
-        href: "https://github.com/vuetifyjs/vuetify-loader"
-      },
-      {
-        text: "github",
-        href: "https://github.com/vuetifyjs/vuetify"
-      },
-      {
-        text: "awesome-vuetify",
-        href: "https://github.com/vuetifyjs/awesome-vuetify"
-      }
-    ],
-    importantLinks: [
-      {
-        text: "Documentation",
-        href: "https://vuetifyjs.com"
-      },
-      {
-        text: "Chat",
-        href: "https://community.vuetifyjs.com"
-      },
-      {
-        text: "Made with Vuetify",
-        href: "https://madewithvuejs.com/vuetify"
-      },
-      {
-        text: "Twitter",
-        href: "https://twitter.com/vuetifyjs"
-      },
-      {
-        text: "Articles",
-        href: "https://medium.com/vuetify"
-      }
-    ],
-    whatsNext: [
-      {
-        text: "Explore components",
-        href: "https://vuetifyjs.com/components/api-explorer"
-      },
-      {
-        text: "Select a layout",
-        href: "https://vuetifyjs.com/getting-started/pre-made-layouts"
-      },
-      {
-        text: "Frequently Asked Questions",
-        href: "https://vuetifyjs.com/getting-started/frequently-asked-questions"
-      }
-    ]
-  })
-};
+		data: () => ({
+			dialog: false,
+			ecosystem: [
+				{
+					text: "vuetify-loader",
+					href: "https://github.com/vuetifyjs/vuetify-loader"
+				},
+				{
+					text: "github",
+					href: "https://github.com/vuetifyjs/vuetify"
+				},
+				{
+					text: "awesome-vuetify",
+					href: "https://github.com/vuetifyjs/awesome-vuetify"
+				}
+			],
+			importantLinks: [
+				{
+					text: "Documentation",
+					href: "https://vuetifyjs.com"
+				},
+				{
+					text: "Chat",
+					href: "https://community.vuetifyjs.com"
+				},
+				{
+					text: "Made with Vuetify",
+					href: "https://madewithvuejs.com/vuetify"
+				},
+				{
+					text: "Twitter",
+					href: "https://twitter.com/vuetifyjs"
+				},
+				{
+					text: "Articles",
+					href: "https://medium.com/vuetify"
+				}
+			],
+			whatsNext: [
+				{
+					text: "Explore components",
+					href: "https://vuetifyjs.com/components/api-explorer"
+				},
+				{
+					text: "Select a layout",
+					href: "https://vuetifyjs.com/getting-started/pre-made-layouts"
+				},
+				{
+					text: "Frequently Asked Questions",
+					href:
+						"https://vuetifyjs.com/getting-started/frequently-asked-questions"
+				}
+			]
+		})
+	};
 </script>
+
+<style scoped>
+	.hero {
+		background: url("https://images.unsplash.com/photo-1537123547273-e59f4f437f1b?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1350&q=80");
+		background-size: cover;
+		background-repeat: no-repeat;
+		background-position: center;
+	}
+
+	.notice {
+		background: #43aa8b46;
+		text-decoration: underline;
+	}
+</style>
