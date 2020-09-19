@@ -30,7 +30,7 @@ const routes = [
     component: () => import("../views/Register.vue"),
   },
   {
-	path: "/account",
+    path: "/account",
     name: "Account",
     component: () => import("../views/Account.vue"),
   },
@@ -53,6 +53,10 @@ const routes = [
     path: "/search/list",
     name: "List Search",
     component: () => import("../views/SearchList.vue"),
+  },
+  {
+    path: "*",
+    component: () => import("../views/NotFound.vue"),
   },
 ];
 
