@@ -213,12 +213,23 @@
 				// add map event listener
 				this.location.coordinates = this.event.location.coordinates;
 				this.time = moment(this.event.time.$date)._d;
+				this.addMapClickListener();
 			},
 			cancelEditEvent() {
 				this.editting = false;
 				// remove map event listener
 				this.location.coordinates = [];
 				this.time = "";
+				this.removeMapClickListener();
+				this.removeMapMarkers();
+				this.addMapMarker(
+					{
+						lng: this.event.location.coordinates[0],
+						lat: this.event.location.coordinates[1]
+					},
+					"#43AA8B",
+					"proposed-marker"
+				);
 			},
 			destroyMap() {
 				console.log(this.content);
@@ -240,10 +251,10 @@
 					const nav = new mapboxgl.NavigationControl();
 					this.map.addControl(nav, "top-right");
 
-					this.map.on(
-						"load",
-						setTimeout(() => this.map.resize(), 100)
-					);
+					// this.map.on(
+					// 	"load",
+					// 	setTimeout(() => this.map.resize(), 2000)
+					// );
 
 					// event location marker
 					this.addMapMarker(
@@ -251,7 +262,8 @@
 							lng: this.event.location.coordinates[0],
 							lat: this.event.location.coordinates[1]
 						},
-						"#43AA8B"
+						"#43AA8B",
+						"proposed-marker"
 					);
 
 					this.addMapMarker(
@@ -271,19 +283,43 @@
 						},
 						"#F8961E"
 					);
+				}, 100);
+			},
+			setLocationCoordinates(lngLat) {
+				this.location.coordinates = [
+					Math.round(lngLat.lng * 10000) / 10000,
+					Math.round(lngLat.lat * 10000) / 10000
+				];
+			},
+			onClickMarkerAdder(e) {
+				// When user clicks on the map, the location is stored in a data variable
+				this.setLocationCoordinates(e.lngLat);
 
-					// Add click listener
-					// this.addMapClickListener();
-				}, 500);
+				// Remove any old markers on the map that they previously set
+				this.removeMapMarkers();
+
+				// Add the new marker
+				this.addMapMarker(e.lngLat, "#43AA8B", "proposed-marker");
+			},
+			addMapClickListener() {
+				this.map.on("click", this.onClickMarkerAdder);
+			},
+			removeMapClickListener() {
+				this.map.off("click", this.onClickMarkerAdder);
 			},
 			removeMapMarkers() {
-				const oldMarker = document.querySelector(".mapboxgl-marker");
+				const oldMarker = document.querySelector(".proposed-marker");
 				if (oldMarker) {
 					oldMarker.parentElement.removeChild(oldMarker);
 				}
 			},
-			addMapMarker(lngLat, color) {
-				new mapboxgl.Marker({ color }).setLngLat(lngLat).addTo(this.map);
+			addMapMarker(lngLat, color, className = "") {
+				let marker = new mapboxgl.Marker({ color })
+					.setLngLat(lngLat)
+					.addTo(this.map);
+				if (className != "") {
+					marker.getElement().classList.add(className);
+				}
 			},
 			formatDate($date) {
 				return new moment($date).format("dddd, Do MMM");
