@@ -92,22 +92,6 @@
 					elevation="4"
 				></v-card>
 			</v-card>
-			<!-- <v-row class="d-flex justify-space-around">
-			<v-btn color="info" class="mt-3">Edit</v-btn>
-			<v-dialog v-model="dialog" persistent max-width="290">
-			<template v-slot:activator="{ on, attrs }">
-			<v-btn color="error" class="mt-3" v-bind="attrs" v-on="on">Remove</v-btn>
-			</template>
-			<v-card>
-			<v-card-title class="headline">Are you sure?</v-card-title>
-			<v-card-actions>
-			<v-spacer></v-spacer>
-			<v-btn color="green darken-1" text @click="dialog = false">Cancel</v-btn>
-			<v-btn color="green darken-1" text @click="removeDog">Yes</v-btn>
-			</v-card-actions>
-			</v-card>
-			</v-dialog>
-			</v-row>-->
 		</v-expansion-panel-content>
 	</v-expansion-panel>
 </template>

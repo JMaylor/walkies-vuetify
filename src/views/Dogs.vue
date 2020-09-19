@@ -19,6 +19,7 @@
 							top
 							left
 							fab
+							class="add-dog-button"
 						>
 							<v-icon>mdi-plus</v-icon>
 						</v-btn>
@@ -210,3 +211,9 @@
 		},
 	};
 </script>
+
+<style scoped>
+.add-dog-button:hover {
+	cursor: pointer;
+}
+</style>
