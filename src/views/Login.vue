@@ -76,6 +76,10 @@
 				this.$refs.form.reset();
 			}
 		},
-		mounted() {}
+		beforeCreate() {
+			if (this.$store.state.token) {
+				this.$router.push('/profile/events')
+			}
+		},
 	};
 </script>

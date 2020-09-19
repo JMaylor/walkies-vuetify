@@ -291,6 +291,11 @@
 				}, null);
 			}
 		},
+		beforeCreate() {
+			if (this.$store.state.token) {
+				this.$router.push('/profile/events')
+			}
+		},
 		mounted() {
 			this.createMap();
 		}
