@@ -4,7 +4,7 @@
 			><v-list nav dense>
 				<div v-for="(link, i) in links" :key="i">
 					<v-list-item
-						v-if="!link.subLinks && link.show"
+						v-if="!link.subLinks && isShown(link)"
 						:to="link.to"
 						class="v-list-item"
 					>
@@ -16,7 +16,7 @@
 					</v-list-item>
 
 					<v-list-group
-						v-else-if="link.show"
+						v-else-if="isShown(link)"
 						:key="link.text"
 						no-action
 						:prepend-icon="link.icon"
@@ -72,7 +72,7 @@
 					{
 						icon: "mdi-account",
 						text: "Profile",
-						show: this.$store.state.token,
+						show: 'in',
 						subLinks: [
 							{
 								to: "/profile/dogs",
@@ -95,18 +95,18 @@
 						to: "/register",
 						icon: "mdi-account-plus",
 						text: "Register",
-						show: !this.$store.state.token,
+						show: 'out',
 					},
 					{
 						to: "/login",
 						icon: "mdi-login",
 						text: "Login",
-						show: !this.$store.state.token,
+						show: 'out',
 					},
 					{
 						icon: "mdi-magnify",
 						text: "Search",
-						show: this.$store.state.token,
+						show: 'in',
 						subLinks: [
 							{
 								to: "/search/map",
@@ -120,8 +120,19 @@
 							}
 						]
 					}
-				]
+				],
+				bottomLinks: []
 			};
+		},
+		methods: {
+			isShown (link) {
+				if (link.show == true) {
+					return true;
+				} else if ((link.show == 'in' && this.$store.state.token) || (link.show == 'out' && !this.$store.state.token)) {
+					return true
+				}
+				return false;
+			}
 		}
 	};
 </script>
