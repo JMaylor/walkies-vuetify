@@ -13,6 +13,25 @@
 					label="Statuses"
 					multiple
 				>
+					<template v-slot:selection="data">
+						<v-chip outlined>
+							<v-icon
+								:color="
+									data.item == 'Confirmed'
+										? 'success'
+										: data.item == 'Pending'
+										? 'accent'
+										: 'warning'
+								"
+								>{{
+									data.item == "Confirmed"
+										? "mdi-calendar-check-outline"
+										: "mdi-calendar-question"
+								}}</v-icon
+							>
+							{{ data.item }}
+						</v-chip>
+					</template>
 				</v-combobox>
 			</v-col>
 		</v-row>
@@ -44,7 +63,7 @@
 			Event
 		},
 		data: () => ({
-			statuses: ["Confirmed", "Invited", 'Pending'],
+			statuses: ["Confirmed", "Invited", "Pending"],
 			openedPanel: null
 		}),
 		computed: {
@@ -81,9 +100,9 @@
 		},
 		methods: {
 			closePanels() {
-				console.log('closing panels');
-				this.op
+				console.log("closing panels");
+				this.op;
 			}
-		},
+		}
 	};
 </script>
