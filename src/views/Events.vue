@@ -6,7 +6,7 @@
 			</v-col>
 		</v-row>
 		<v-row align="center" justify="center">
-			<v-col cols="4" md="3">
+			<v-col cols="12" md="6" xl="4">
 				<v-combobox
 					v-model="statuses"
 					:items="['Confirmed', 'Invited', 'Pending']"
