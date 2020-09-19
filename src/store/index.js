@@ -2,18 +2,28 @@ import Vue from "vue";
 import Vuex from "vuex";
 const axios = require("axios");
 const moment = require("moment");
+import router from "../router/index";
 
 Vue.use(Vuex);
 
-export default new Vuex.Store({
-  state: {
+const getDefaultState = () => {
+  return {
     baseURL: process.env.VUE_APP_API,
     mapboxKey: process.env.VUE_APP_MAPBOX_KEY,
     token: localStorage.getItem("token") || null,
-    drawer: true,
+    drawer: false,
     userProfile: null,
-  },
+  };
+};
+
+const state = getDefaultState();
+
+export default new Vuex.Store({
+  state,
   mutations: {
+    resetState(state) {
+      Object.assign(state, getDefaultState());
+    },
     storeToken(state, token) {
       state.token = token;
     },
@@ -56,8 +66,8 @@ export default new Vuex.Store({
       const eventIndex = state.userProfile.events.findIndex(
         (x) => x._id.$oid == updatedEvent._id.$oid
       );
-	  // update it
-	  state.userProfile.events.splice(eventIndex, 1, updatedEvent)
+      // update it
+      state.userProfile.events.splice(eventIndex, 1, updatedEvent);
     },
   },
   actions: {
@@ -104,7 +114,14 @@ export default new Vuex.Store({
           });
       }
     },
-    logout() {},
+    logout(context) {
+      // remove token from localstorage
+	  localStorage.removeItem("token");
+	  // reset state
+      context.commit("resetState");
+      // go to landing page
+      router.push("/");
+    },
     async addDog(context, dog) {
       const newDog = await axios.post(
         `${context.state.baseURL}dogs`,
