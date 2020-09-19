@@ -65,6 +65,7 @@
 					.post(`${this.$store.state.baseURL}auth/login`, this.user)
 					.then(response => {
 						this.$store.dispatch("storeToken", response.data.token);
+						this.$router.push('/profile/events')
 					})
 					.catch(error => {
 						console.log(error);
