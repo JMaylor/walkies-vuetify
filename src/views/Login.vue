@@ -32,7 +32,7 @@
 					</v-row>
 
 					<v-row>
-						<v-btn :disabled="!valid" color="success" class="mx-4" @click="submit">Login</v-btn>
+						<v-btn :disabled="!valid" color="success" class="mx-4" type="submit">Login</v-btn>
 					</v-row>
 				</v-form>
 			</v-col>
@@ -65,6 +65,7 @@
 					.post(`${this.$store.state.baseURL}auth/login`, this.user)
 					.then(response => {
 						this.$store.dispatch("storeToken", response.data.token);
+						this.$store.dispatch('getUserProfile')
 						this.$router.push('/profile/events')
 					})
 					.catch(error => {
