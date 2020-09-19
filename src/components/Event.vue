@@ -29,47 +29,44 @@
 
 		<v-expansion-panel-content class="py-0 my-0">
 			<v-divider></v-divider>
-			<div v-if="status == 'Invited'">
-				<v-row
-					v-if="!editting"
-					justify="center"
-					align="center"
-					class="text-center"
+
+			<v-row
+				v-if="!editting"
+				justify="center"
+				align="center"
+				class="text-center"
+			>
+				<v-col cols="4"
+					><v-btn color="error" @click="declineEvent">{{
+						status == "Invited" ? "Decline" : "Cancel"
+					}}</v-btn></v-col
 				>
-					<v-col cols="4"
-						><v-btn color="error" @click="declineEvent"
-							>Decline</v-btn
-						></v-col
-					>
-					<v-col cols="4"
-						><v-btn color="success" @click="acceptEvent"
-							>Accept</v-btn
-						></v-col
-					>
-					<v-col cols="4"
-						><v-btn color="accent" @click="initEditEvent"
-							>Counter</v-btn
-						></v-col
-					>
-				</v-row>
-				<v-row
-					v-else
-					justify="center"
-					align="center"
-					class="text-center"
+				<v-col cols="4"
+					><v-btn
+						v-if="status == 'Invited'"
+						color="success"
+						@click="acceptEvent"
+						>Accept</v-btn
+					></v-col
 				>
-					<v-col cols="4"
-						><v-btn color="success" @click="updateEvent"
-							>Send Update</v-btn
-						></v-col
-					>
-					<v-col cols="4"
-						><v-btn color="warning" @click="cancelEditEvent"
-							>Withdraw</v-btn
-						></v-col
-					>
-				</v-row>
-			</div>
+				<v-col cols="4"
+					><v-btn color="accent" @click="initEditEvent">{{
+						status == "Invited" ? "Counter" : "Amend"
+					}}</v-btn></v-col
+				>
+			</v-row>
+			<v-row v-else justify="center" align="center" class="text-center">
+				<v-col cols="4"
+					><v-btn color="success" @click="updateEvent"
+						>Suggest New Details</v-btn
+					></v-col
+				>
+				<v-col cols="4"
+					><v-btn color="warning" @click="cancelEditEvent"
+						>Stop editing</v-btn
+					></v-col
+				>
+			</v-row>
 
 			<v-row
 				v-if="editting"
