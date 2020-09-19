@@ -116,10 +116,11 @@
 							<v-text-field
 								v-model="user.location.coordinates"
 								label="Location"
+								disabled
 								required
 								:rules="locationRules"
+								prepend-icon="mdi-crosshairs-gps"
 							>
-								<v-icon slot="prepend" @click="requestLocation" color="info">mdi-crosshairs-gps</v-icon>
 							</v-text-field>
 						</v-col>
 						<v-col cols="12">
