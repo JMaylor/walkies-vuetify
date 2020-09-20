@@ -52,7 +52,7 @@
 			</v-col>
 		</v-row>
 		<v-row class="text-center hero" mt-0 justify="start">
-			<v-col class="ma-4" cols="12" md="4">
+			<v-col cols="12" md="6">
 				<h1 class="display-2 font-weight-bold mb-3 white--text">
 					<span class="walkies-brand">Walkies</span><br />Puppy play,
 					without the pay.
@@ -78,29 +78,36 @@
 					<v-avatar left>
 						<v-icon>mdi-login</v-icon>
 					</v-avatar>
-					Login! </v-chip
-				><br />
+					Login!
+				</v-chip>
 			</v-col>
 		</v-row>
 
 		<v-row class="text-center" ma-0 pa-0 justify="start">
-			<v-col cols="12" md="6">
-				<v-card class="py-12 px-4" color="grey lighten-5" flat>
-					<v-avatar color="primary darken-4" size="88">
-						<v-icon large color="white">mdi-paw</v-icon>
-					</v-avatar>
+			<v-col
+				cols="12"
+				md="4"
+				v-for="(feature, i) in features"
+				:key="i"
+				class="d-flex flex-column"
+			>
+				<v-card
+					class="elevation-5 flex d-flex flex-column"
+					color="grey lighten-5"
+				>
+					<v-card-subtitle
+						><v-avatar color="primary darken-4" size="88">
+							<v-icon large dark color="white">{{
+								feature.icon
+							}}</v-icon>
+						</v-avatar></v-card-subtitle
+					>
 
 					<v-card-title
 						class="justify-center font-weight-black text-uppercase"
-						>Title</v-card-title
+						>{{ feature.title }}</v-card-title
 					>
-					<v-card-text class="subtitle-1">text</v-card-text>
-				</v-card>
-			</v-col>
-			<v-col cols="12" md="6">
-				<v-card class="py-12 px-4" color="grey lighten-5" flat>
-
-					<v-card-text class="subtitle-1">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Sapiente quidem ducimus modi atque perspiciatis libero, dicta delectus! Totam praesentium esse labore nisi maiores accusamus assumenda corporis, libero cupiditate! Rerum, ducimus?</v-card-text>
+					<v-card-text v-html="feature.text"></v-card-text>
 				</v-card>
 			</v-col>
 		</v-row>
@@ -111,6 +118,26 @@
 	export default {
 		data: () => ({
 			dialog: false,
+			features: [
+				{
+					icon: "mdi-new-box",
+					title: "New Features",
+					text:
+						"This some <e>amazing</e>, eye-catching filler text! Your eyes are </b>totally drawn</b> to this section and you'll probably read it then click this <a href='#'>totally real link</a>"
+				},
+				{
+					icon: "mdi-star",
+					title: "Partner",
+					text:
+						"We have partnered with another completely real company, Munchywoofs. They sell all kinds of dog food, and have a product that is specifically suited to taking on walks because it doesn't upset your dog's stomach if they run around with a full belly of the stuff!</a>"
+				},
+				{
+					icon: "mdi-newspaper",
+					title: "The Newspaper",
+					text:
+						"Here is some fake filler content about this one time when Walkies was featured in a completely authentic newspaper."
+				}
+			]
 		})
 	};
 </script>
