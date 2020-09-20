@@ -16,7 +16,7 @@
 					thumb-size="24"
 					max="10"
 					thumb-label="always"
-					@end="searchUsers"
+					@end="refreshMarkers"
 				></v-slider>
 			</v-col>
 			<v-col cols="4" md="3">
@@ -25,6 +25,7 @@
 					:items="['Male', 'Female']"
 					label="Genders"
 					multiple
+					@change="refreshMarkers"
 				>
 				</v-combobox>
 			</v-col>
@@ -36,12 +37,13 @@
 					max="99"
 					thumb-label
 					v-model="ages"
+					@end="refreshMarkers"
 				></v-range-slider>
 			</v-col>
 		</v-row>
 
-		<v-card height="300" class="pa-1 mt-3" rounded elevation="8">
-			<v-card id="search-map" height="292" rounded elevation="4"></v-card>
+		<v-card height="60vh" class="pa-1 mt-3" rounded elevation="8">
+			<v-card id="search-map" height="calc(60vh - 8px)" rounded elevation="4"></v-card>
 		</v-card>
 	</v-container>
 </template>
@@ -93,7 +95,7 @@
 				const searchResults = await axios.post(
 					`${this.$store.state.baseURL}user/search`,
 					{
-						distance: 10
+						distance: 20
 					},
 					{
 						headers: {
@@ -111,23 +113,7 @@
 				});
 				this.users = users;
 
-				this.removeMapMarkers();
-
-				this.$nextTick(() => {
-					this.filteredUsers.forEach(user => {
-						const popup = new mapboxgl.Popup({ offset: 25 }).setHTML(
-							`<button type="button" class="v-btn v-btn--contained theme--light v-size--default secondary"><span class="v-btn__content">${user.first_name}</span></button>`
-						);
-						this.addMapMarker(
-							{
-								lng: user.location.coordinates[0],
-								lat: user.location.coordinates[1]
-							},
-							"#43AA8B",
-							popup
-						);
-					});
-				});
+				this.addSearchResultMarkers();
 			},
 			createMap() {
 				// retreieve access token
@@ -147,35 +133,63 @@
 				this.map.addControl(nav, "top-right");
 
 				// Add marker for user
-				const popup = new mapboxgl.Popup({ offset: 25 }).setHTML(
-					'<div id="vue-popup-content"></div>'
-				);
+				// const popup = new mapboxgl.Popup({ offset: 25 }).setHTML(
+				// 	'<div id="vue-popup-content"></div>'
+				// );
 				this.addMapMarker(
 					{
 						lng: this.$store.state.userProfile.location.coordinates[0],
 						lat: this.$store.state.userProfile.location.coordinates[1]
 					},
-					"#F8961E",
-					popup
+					"#F8961E"
 				);
-				const popupInstance = new UserPopupClass({
+
+				new UserPopupClass({
 					propsData: {
 						info: this.$store.state.userProfile.last_name
 					}
 				});
-				popupInstance.$mount("#vue-popup-content");
+				// popupInstance.$mount("#vue-popup-content");
 			},
 			removeMapMarkers() {
-				const oldMarkers = document.querySelectorAll(".mapboxgl-marker");
+				const oldMarkers = document.querySelectorAll(
+					".search-result-marker"
+				);
 				if (oldMarkers) {
 					oldMarkers.forEach(el => el.parentElement.removeChild(el));
 				}
 			},
-			addMapMarker(lngLat, color, popup) {
-				new mapboxgl.Marker({ color })
-					.setLngLat(lngLat)
-					.setPopup(popup)
-					.addTo(this.map);
+			addMapMarker(lngLat, color, className, popup) {
+				const marker = new mapboxgl.Marker({ color }).setLngLat(lngLat);
+				if (popup) {
+					marker.setPopup(popup);
+				}
+				marker.addTo(this.map);
+				if (className) {
+					marker.getElement().classList.add(className);
+				}
+			},
+			refreshMarkers() {
+				this.removeMapMarkers();
+				this.addSearchResultMarkers();
+			},
+			addSearchResultMarkers() {
+				this.$nextTick(() => {
+					this.filteredUsers.forEach(user => {
+						const popup = new mapboxgl.Popup({ offset: 25 }).setHTML(
+							`<button type="button" class="v-btn v-btn--contained theme--light v-size--default secondary"><span class="v-btn__content">${user.first_name}</span></button>`
+						);
+						this.addMapMarker(
+							{
+								lng: user.location.coordinates[0],
+								lat: user.location.coordinates[1]
+							},
+							"#43AA8B",
+							"search-result-marker",
+							popup
+						);
+					});
+				});
 			},
 			deg2rad(deg) {
 				return deg * (Math.PI / 180);
@@ -195,9 +209,22 @@
 				return d;
 			}
 		},
-		mounted() {
-			this.createMap();
+		created() {
 			this.searchUsers();
+		},
+		mounted() {
+			if (this.$store.state.userProfile) {
+				this.createMap();
+				this.searchUsers();
+			} else {
+				this.$store.watch(
+					() => this.$store.state.userProfile,
+					async () => {
+						this.createMap();
+						this.searchUsers();
+					}
+				);
+			}
 		}
 	};
 </script>
