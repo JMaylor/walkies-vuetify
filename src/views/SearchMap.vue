@@ -43,7 +43,12 @@
 		</v-row>
 
 		<v-card height="60vh" class="pa-1 mt-3" rounded elevation="8">
-			<v-card id="search-map" height="calc(60vh - 8px)" rounded elevation="4"></v-card>
+			<v-card
+				id="search-map"
+				height="calc(60vh - 8px)"
+				rounded
+				elevation="4"
+			></v-card>
 		</v-card>
 	</v-container>
 </template>
@@ -176,9 +181,46 @@
 			addSearchResultMarkers() {
 				this.$nextTick(() => {
 					this.filteredUsers.forEach(user => {
-						const popup = new mapboxgl.Popup({ offset: 25 }).setHTML(
-							`<button type="button" class="v-btn v-btn--contained theme--light v-size--default secondary"><span class="v-btn__content">${user.first_name}</span></button>`
-						);
+						// first create a plain userPopup with an empty div
+						// with an ID that includes the user ID to ensure all popups are different IDs
+						const userPopup = new mapboxgl.Popup({
+							closeOnMove: true
+						})
+							.setHTML(
+								`<div id="vue-popup-content-${user._id.$oid}"></div>`
+							)
+							.addTo(this.map);
+
+						// next create the popup content from the vue component
+						// and pass in the user as prop
+						const popupInstance = new UserPopupClass({
+							propsData: {
+								user: user
+							}
+						});
+
+						// when the popup opens
+						userPopup.on("open", () => {
+							// check to see if we can't find the div
+							// note we do this because after being mounted once,
+							// the original popup div has been destroyed
+							// so we would get errors when attempting to mount again
+							if (
+								document.querySelector(
+									`#vue-popup-content-${user._id.$oid}`
+								)
+							) {
+								// mount the vue component onto the popup
+								popupInstance.$mount(
+									`#vue-popup-content-${user._id.$oid}`
+								);
+								popupInstance.$on('open', () => {
+									console.log(`opened ${user._id.$oid}`)
+								})
+							}
+						});
+
+						// finally add a marker to the map
 						this.addMapMarker(
 							{
 								lng: user.location.coordinates[0],
@@ -186,7 +228,7 @@
 							},
 							"#43AA8B",
 							"search-result-marker",
-							popup
+							userPopup
 						);
 					});
 				});

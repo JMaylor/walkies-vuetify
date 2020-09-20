@@ -1,12 +1,18 @@
 <template>
-	<v-btn @click="popupClicked">{{ info }}</v-btn>
+	<v-container fluid>
+		<v-row>
+			{{ user.dogs.length }} dogs
+		</v-row>
+		<v-btn @click="$emit('open')" color="accent">{{ user.first_name }}</v-btn>
+	</v-container>
 </template>
 <script>
 	export default {
-		props: ["info"],
+		props: ["user"],
 		methods: {
 			popupClicked() {
-				alert("Learn more clicked");
+				console.log('clicked')
+				alert("clicked");
 			}
 		}
 	};
