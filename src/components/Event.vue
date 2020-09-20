@@ -289,9 +289,9 @@
 				this.map.off("click", this.onClickMarkerAdder);
 			},
 			removeMapMarkers() {
-				const oldMarker = document.querySelector(`#event-map-${this.event._id.$oid} .proposed-marker`);
-				if (oldMarker) {
-					oldMarker.parentElement.removeChild(oldMarker);
+				const oldMarkers = document.querySelectorAll('.proposed-marker');
+				if (oldMarkers) {
+					oldMarkers.forEach(el => el.parentElement.removeChild(el));
 				}
 			},
 			addMapMarker(lngLat, color, className = "") {
