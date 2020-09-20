@@ -289,7 +289,7 @@
 				this.map.off("click", this.onClickMarkerAdder);
 			},
 			removeMapMarkers() {
-				const oldMarker = document.querySelector(".proposed-marker");
+				const oldMarker = document.querySelector(`#event-map-${this.event._id.$oid} .proposed-marker`);
 				if (oldMarker) {
 					oldMarker.parentElement.removeChild(oldMarker);
 				}
