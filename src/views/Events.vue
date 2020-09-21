@@ -5,7 +5,7 @@
 				<h2 class="display-1">Events</h2>
 			</v-col>
 		</v-row>
-		<v-row align="center" justify="center">
+		<v-row align="center" justify="center" v-if="$store.state.userProfile.events.length > 0">
 			<v-col cols="12" md="6" xl="4">
 				<v-combobox
 					v-model="statuses"
@@ -42,7 +42,10 @@
 			justify="center"
 			no-gutters
 		>
-			<v-expansion-panels v-model="openedPanel">
+			<v-expansion-panels
+				v-model="openedPanel"
+				v-if="$store.state.userProfile.events.length > 0"
+			>
 				<Event
 					v-for="event in filteredEvents"
 					:key="event._id.$oid"
@@ -50,6 +53,30 @@
 					v-on:close="openedPanel = null"
 				/>
 			</v-expansion-panels>
+			<v-col cols="12" md="6" xl="4" v-else class="text-center"
+				>You don't have any events upcoming. Why not invite someone for
+				a walk?<br /><v-chip
+					class="ma-2"
+					color="secondary"
+					text-color="white"
+					to="/search/list"
+				>
+					<v-avatar left>
+						<v-icon>mdi-paw</v-icon>
+					</v-avatar>
+					List Search</v-chip
+				><br /><v-chip
+					class="ma-2"
+					color="secondary"
+					text-color="white"
+					to="/search/map"
+				>
+					<v-avatar left>
+						<v-icon>mdi-map</v-icon>
+					</v-avatar>
+					Map Search</v-chip
+				></v-col
+			>
 		</v-row>
 	</v-container>
 </template>
