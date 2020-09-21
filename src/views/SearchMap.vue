@@ -50,7 +50,7 @@
 				elevation="4"
 			></v-card>
 		</v-card>
-		<NewEventDialog :user="user" />
+		<NewEventDialog :user="user" v-on:close="user = {}"/>
 	</v-container>
 </template>
 
@@ -223,7 +223,10 @@
 									`#vue-popup-content-${user._id.$oid}`
 								);
 								popupInstance.$on("open", () => {
-									this.openDialog(user);
+									this.user = user;
+								});
+								popupInstance.$on("close", () => {
+									this.user = {};
 								});
 							}
 						});
@@ -258,10 +261,6 @@
 				var d = R * c; // Distance in miles
 				return d;
 			},
-			openDialog(user) {
-				this.user = user;
-				// this.dialog = true;
-			}
 		},
 		created() {
 			this.searchUsers();

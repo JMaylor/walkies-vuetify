@@ -1,5 +1,5 @@
 <template>
-	<v-dialog v-model="dialog" max-width="500">
+	<v-dialog v-model="dialog" max-width="500" @click:outside="reset">
 		<template v-slot:activator="{ on, attrs }">
 			<v-btn color="primary" class="mt-3" v-bind="attrs" v-on="on"
 				>Go Walkies!</v-btn
@@ -58,7 +58,7 @@
 			</v-card-text>
 			<v-card-actions>
 				<v-spacer></v-spacer>
-				<v-btn color="warning" @click="dialog = false">Cancel</v-btn>
+				<v-btn color="warning" @click="reset">Cancel</v-btn>
 				<v-btn
 					color="secondary"
 					:disabled="!formValid"
@@ -103,13 +103,19 @@
 		},
 		watch: {
 			user: function() {
-				this.dialog = true;
-				this.$nextTick(() => {
-					this.createMap();
-				});
+				if (this.user._id) {
+					this.dialog = true;
+					this.$nextTick(() => {
+						this.createMap();
+					});
+				}
 			}
 		},
 		methods: {
+			reset() {
+				this.dialog = false;
+				this.$emit("close");
+			},
 			createMap() {
 				// retreieve access token
 				mapboxgl.accessToken = this.$store.state.mapboxKey;
@@ -143,7 +149,9 @@
 				});
 			},
 			removeMapMarkers() {
-				const oldMarker = document.querySelector(".suggested-location-marker");
+				const oldMarker = document.querySelector(
+					".suggested-location-marker"
+				);
 				if (oldMarker) {
 					oldMarker.parentElement.removeChild(oldMarker);
 				}
@@ -152,7 +160,8 @@
 				new mapboxgl.Marker({ color: "#577590" })
 					.setLngLat(lngLat)
 					.addTo(this.map)
-					.getElement().classList.add('suggested-location-marker')
+					.getElement()
+					.classList.add("suggested-location-marker");
 			},
 			setLocationCoordinates(lngLat) {
 				this.location.coordinates = [
