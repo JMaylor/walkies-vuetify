@@ -16,7 +16,7 @@
 					thumb-size="24"
 					max="10"
 					thumb-label="always"
-					@end="refreshMarkers"
+					@mouseup="refreshMarkers"
 				></v-slider>
 			</v-col>
 			<v-col cols="4" md="3">
@@ -37,7 +37,7 @@
 					max="99"
 					thumb-label
 					v-model="ages"
-					@end="refreshMarkers"
+					@mouseup="refreshMarkers"
 				></v-range-slider>
 			</v-col>
 		</v-row>
@@ -50,6 +50,7 @@
 				elevation="4"
 			></v-card>
 		</v-card>
+		<NewEventDialog :user="user" />
 	</v-container>
 </template>
 
@@ -59,16 +60,22 @@
 	import moment from "moment";
 	import Vue from "vue";
 	import UserPopup from "@/components/UserPopup";
+	import NewEventDialog from "@/components/NewEventDialog";
 
 	const UserPopupClass = Vue.extend(UserPopup);
 
 	export default {
+		components: {
+			NewEventDialog
+		},
 		data: () => ({
 			genders: ["Male", "Female"],
 			ages: [18, 99],
 			distance: 10,
 			map: "",
-			users: []
+			users: [],
+			user: {}
+			// dialog: false
 		}),
 		computed: {
 			filteredUsers() {
@@ -137,10 +144,6 @@
 				const nav = new mapboxgl.NavigationControl();
 				this.map.addControl(nav, "top-right");
 
-				// Add marker for user
-				// const popup = new mapboxgl.Popup({ offset: 25 }).setHTML(
-				// 	'<div id="vue-popup-content"></div>'
-				// );
 				this.addMapMarker(
 					{
 						lng: this.$store.state.userProfile.location.coordinates[0],
@@ -154,7 +157,6 @@
 						info: this.$store.state.userProfile.last_name
 					}
 				});
-				// popupInstance.$mount("#vue-popup-content");
 			},
 			removeMapMarkers() {
 				const oldMarkers = document.querySelectorAll(
@@ -180,11 +182,17 @@
 			},
 			addSearchResultMarkers() {
 				this.$nextTick(() => {
+					// close any popups
+					const popup = document.getElementsByClassName("mapboxgl-popup");
+					if (popup.length) {
+						popup[0].remove();
+					}
+					
 					this.filteredUsers.forEach(user => {
 						// first create a plain userPopup with an empty div
 						// with an ID that includes the user ID to ensure all popups are different IDs
 						const userPopup = new mapboxgl.Popup({
-							closeOnMove: true
+							maxWidth: "400px"
 						})
 							.setHTML(
 								`<div id="vue-popup-content-${user._id.$oid}"></div>`
@@ -214,9 +222,9 @@
 								popupInstance.$mount(
 									`#vue-popup-content-${user._id.$oid}`
 								);
-								popupInstance.$on('open', () => {
-									console.log(`opened ${user._id.$oid}`)
-								})
+								popupInstance.$on("open", () => {
+									this.openDialog(user);
+								});
 							}
 						});
 
@@ -249,6 +257,10 @@
 				var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 				var d = R * c; // Distance in miles
 				return d;
+			},
+			openDialog(user) {
+				this.user = user;
+				// this.dialog = true;
 			}
 		},
 		created() {
