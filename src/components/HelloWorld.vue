@@ -51,7 +51,7 @@
 				</v-dialog>
 			</v-col>
 		</v-row>
-		<v-row class="text-center hero" mt-0 justify="start">
+		<v-row class="text-center hero py-16" mt-0 justify="start">
 			<v-col cols="12" md="6">
 				<h1 class="display-2 font-weight-bold mb-3 white--text">
 					<span class="walkies-brand">Walkies</span><br />Puppy play,
